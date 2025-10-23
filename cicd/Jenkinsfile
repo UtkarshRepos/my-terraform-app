@@ -1,0 +1,32 @@
+pipeline {
+  agent any
+  environment {
+    AWS_DEFAULT_REGION = 'us-east-1' // replace as needed
+    ECR_REPO = 'REPLACE_WITH_ECR_REPO'
+  }
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Build') {
+      steps {
+        sh 'docker build -t ${ECR_REPO}:latest ./app'
+      }
+    }
+    stage('Test') {
+      steps {
+        sh 'echo "no tests yet"'
+      }
+    }
+    stage('Push to ECR') {
+      when { expression { return env.ECR_REPO != 'REPLACE_WITH_ECR_REPO' } }
+      steps {
+        sh '''
+          aws ecr get-login-password | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+          docker tag ${ECR_REPO}:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO}:latest
+          docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO}:latest
+        '''
+      }
+    }
+  }
+}
