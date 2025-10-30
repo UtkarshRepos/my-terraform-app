@@ -59,3 +59,4 @@ resource "aws_route_table_association" "public" {
 }
 
 data "aws_availability_zones" "available" {}
+ 
