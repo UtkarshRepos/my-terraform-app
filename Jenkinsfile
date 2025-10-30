@@ -4,35 +4,79 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/UtkarshRepos/my-terraform-app.git'
+                git 'https://github.com/UtkarshRepos/my-terraform-app.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'echo "Building Docker image..."'
+                echo 'Building Docker image...'
                 sh 'docker build -t my-terraform-app .'
             }
         }
 
         stage('Run Terraform') {
             steps {
-                sh 'echo "Initializing Terraform..."'
-                sh 'terraform init'
-                sh 'terraform validate'
+                echo 'Initializing Terraform...'
+                sh 'docker run --rm -v $(pwd):/app -w /app my-terraform-app terraform init'
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan'
+                sh 'docker run --rm -v $(pwd):/app -w /app my-terraform-app terraform plan'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                input message: 'Approve to apply?', ok: 'Apply'
-                sh 'terraform apply -auto-approve'
+                sh 'docker run --rm -v $(pwd):/app -w /app my-terraform-app terraform apply -auto-approve'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Deployment Successful!'
+        }
+        failure {
+            echo '❌ Deployment Failed!'
+        }
+    }
+}
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/UtkarshRepos/my-terraform-app.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                sh 'docker build -t my-terraform-app .'
+            }
+        }
+
+        stage('Run Terraform') {
+            steps {
+                echo 'Initializing Terraform...'
+                sh 'docker run --rm -v $(pwd):/app -w /app my-terraform-app terraform init'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'docker run --rm -v $(pwd):/app -w /app my-terraform-app terraform plan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                sh 'docker run --rm -v $(pwd):/app -w /app my-terraform-app terraform apply -auto-approve'
             }
         }
     }
