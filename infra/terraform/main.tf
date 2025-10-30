@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 # Example: VPC (placeholder)
-resource "aws_vpc" "main" {
-  cidr_block = var.vpc_cidr
-  tags = { Name = "${var.project_name}-vpc" }
-}
+# resource "aws_vpc" "main" {
+#  cidr_block = var.vpc_cidr
+# tags = { Name = "${var.project_name}-vpc" }
+# }
