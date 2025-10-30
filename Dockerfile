@@ -1,7 +1,8 @@
-# Dockerfile
-FROM node:18
+FROM hashicorp/terraform:1.6
+
 WORKDIR /app
 COPY . .
-RUN npm install
-EXPOSE 3000
-CMD ["npm", "start"]
+
+RUN apk add --no-cache bash git openssh
+
+CMD ["terraform", "--version"]
