@@ -3,11 +3,10 @@ pipeline {
 
     stages {
         stage('Checkout') {
-    steps {
-        git branch: 'main', url: 'https://github.com/UtkarshRepos/my-terraform-app.git'
-    }
-}
-
+            steps {
+                git branch: 'main', url: 'https://github.com/UtkarshRepos/my-terraform-app.git'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -19,19 +18,19 @@ pipeline {
         stage('Run Terraform') {
             steps {
                 echo 'Initializing Terraform...'
-                sh 'docker run --rm --entrypoint="" -v $(pwd):/app -w /app my-terraform-app terraform init'
+                sh 'docker run --rm --entrypoint="" -v $(pwd)/infra/terraform:/app -w /app my-terraform-app terraform init'
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh 'docker run --rm --entrypoint="" -v $(pwd):/app -w /app my-terraform-app terraform plan'
+                sh 'docker run --rm --entrypoint="" -v $(pwd)/infra/terraform:/app -w /app my-terraform-app terraform plan'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh 'docker run --rm --entrypoint="" -v $(pwd):/app -w /app my-terraform-app terraform apply -auto-approve'
+                sh 'docker run --rm --entrypoint="" -v $(pwd)/infra/terraform:/app -w /app my-terraform-app terraform apply -auto-approve'
             }
         }
     }
