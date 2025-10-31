@@ -3,10 +3,11 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                git 'https://github.com/UtkarshRepos/my-terraform-app.git'
-            }
-        }
+    steps {
+        git branch: 'main', url: 'https://github.com/UtkarshRepos/my-terraform-app.git'
+    }
+}
+
 
         stage('Build Docker Image') {
             steps {
